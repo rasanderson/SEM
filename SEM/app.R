@@ -59,6 +59,10 @@ ui <- fluidPage(
 server <- function(input, output) {
     
     sem_mod <- reactive({
+      chosensem <- paste(as.vector(input$sembox), collapse = "")
+      switch(chosensem,
+             "1234",
+             )
           big_sweden_mod<-psem(
             lme(humans  ~ time   + habitat1,                              random=~1|name, rawd),
             lme(seed    ~ humans + habitat1,                              random=~1|name, rawd),
