@@ -1,10 +1,10 @@
 ### for ROY  SEM
 
-rawd<-read.csv("FINAL_SWEDEN.csv", header=TRUE)
+rawd<-read.csv("www/FINAL_SWEDEN.csv", header=TRUE)
 
 
 ## need to build a SEM with the following ' big model'
-install.packages("piecewiseSEM")
+#install.packages("piecewiseSEM")
 library(piecewiseSEM)
 library(nlme)
 #
