@@ -1,0 +1,97 @@
+---
+title: "Tutorial"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+
+library(piecewiseSEM)
+library(nlme)
+
+rawd<-read.csv("www/FINAL_SWEDEN.csv", header=TRUE)
+
+sem_coef <- function(x){
+  sem_summary <- summary(x, .progressBar = FALSE)
+  return(sem_summary$coefficients)
+}
+
+sem_plot <- function(x){
+  plot(x, show="std",node_attrs = list(
+  shape = "circle", color = "black",
+  fillcolor = "orange"))
+}
+
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## Introduction
+
+### Background 
+The story is mesopredator release (top down)  versus habitat release (bottom up) for 
+red fox, with interactions with lynx and wolves.
+
+![Lynx](www/lynx.jpg)
+
+As the lynx and wolf are hunted out of existence their impact on the red fox declines as predators
+As the human populationgrows and industrialisation improves more land is turned arable (seed sown)
+the lynx and wold dontlike arable land and decline ~ habitat loss the red fox increases;
+they like arable land (mice and thinsg to eat)
+
+* Simple ecology will not work ~ it is not a glm as everything interacts
+* We use sem as in the origina paper to identify relatve contribution of each to each
+so can we asnwer the question are foxes released from predation or rleased form a carrying capacity
+
+I think that this is an exciting idea for studying as it presses all thebuttons with wolf and lynx 
+
+
+
+## Running the SEM
+Below I have setup an SEM for you. Run the code, look at the coefficients, and
+alter the SEM to remove non-significant components. You should aim to have a
+minimal (most simple) SEM where all the coefficients are significant.
+
+
+```{r sem_code, exercise=TRUE, exercise.lines = 15}
+big_sweden.mod<-psem(
+  
+ # Edit and/or comment out the next 5 lines of code based on coefficients from SEM  
+ lme(humans  ~ time   + habitat1,                           random=~1|name,rawd),
+ lme(seed    ~ humans + habitat1,                           random=~1|name,rawd),
+ lme(wolf    ~ humans + seed + habitat1,                    random=~1|name,rawd),
+ lme(lynx    ~ humans + seed + habitat1,                    random=~1|name,rawd),
+ lme(red_fox ~ humans + seed + wolf + lynx + habitat1,      random=~1|name, rawd)
+ 
+ )
+ 
+sem_coef(big_sweden.mod)
+sem_plot(big_sweden.mod)
+
+```
+
+## Questions
+
+### Interpreting your SEM
+
+Look at your SEM output and answer the following questions (need to get round to
+changing them to match the SEM properly!!)
+
+```{r quiz}
+quiz(
+  question("Which is the most exciting animal?",
+    answer("lynx", message = "No, lynx are boring"),
+    answer("humans", message = "No, people are boring and I'm antisocial"),
+    answer("wolves", correct = TRUE, message = "Yes. Wolves are big and fierce"),
+    allow_retry = TRUE
+  ),
+  question("Which type of model is best?",
+    answer("SEM", correct = TRUE, message = "SEMs are ace"),
+    answer("t.test", message = "Only an idiot would use a t-test on these data"),
+    answer("glm", message = "OK, but doesn't account for collinearity or grouping"),
+    allow_retry = TRUE
+  )
+)
+```
+
